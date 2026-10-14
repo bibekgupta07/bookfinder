@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -20,6 +22,17 @@ plugins {
             versionName = "1.0"
 
             testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+            // Google Books API key is read from local.properties (not committed)
+            val localProperties = Properties().apply {
+                val file = rootProject.file("local.properties")
+                if (file.exists()) file.inputStream().use { load(it) }
+            }
+            buildConfigField(
+                "String",
+                "GOOGLE_BOOKS_API_KEY",
+                "\"${localProperties.getProperty("GOOGLE_BOOKS_API_KEY", "")}\""
+            )
         }
 
         buildTypes {
@@ -40,6 +53,7 @@ plugins {
         }
         buildFeatures {
             compose = true
+            buildConfig = true
         }
     }
 
